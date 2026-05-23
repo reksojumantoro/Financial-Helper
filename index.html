@@ -1624,5 +1624,21 @@ function checkRecurring() {
 }
 checkRecurring();
 </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+
+const SUPABASE_URL =
+'https://rdpondbbbitbiueeuxba.supabase.co/rest/v1/'
+
+const SUPABASE_ANON_KEY =
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkcG9uZGJiYml0Yml1ZWV1eGJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NDIyOTEsImV4cCI6MjA5NTExODI5MX0.d0fNQ2PhoGtrioYsX449OgH-j6Qf0yV4JudTnTTQrNE'
+
+const supabase =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+)
+
+</script>
 </body>
 </html>
