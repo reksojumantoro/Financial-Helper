@@ -251,6 +251,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </style>
 </head>
 <body>
+
+  <div style="padding:20px">
+
+<h2>Login / Register</h2>
+
+<input
+type="email"
+id="email"
+placeholder="Email">
+
+<br><br>
+
+<input
+type="password"
+id="password"
+placeholder="Password">
+
+<br><br>
+
+<button onclick="registerUser()">
+Register
+</button>
+
+<button onclick="loginUser()">
+Login
+</button>
+
+</div>
+  
 <div class="app">
 
 <!-- ONBOARDING -->
@@ -1641,6 +1670,62 @@ window.supabase.createClient(
 )
 
 console.log("Supabase Connected")
+
+async function registerUser(){
+
+const email =
+document.getElementById("email").value
+
+const password =
+document.getElementById("password").value
+
+const { data, error } =
+await supabaseClient.auth.signUp({
+
+email,
+password
+
+})
+
+if(error){
+
+alert(error.message)
+
+}else{
+
+alert("Register berhasil!")
+
+}
+
+}
+
+async function loginUser(){
+
+const email =
+document.getElementById("email").value
+
+const password =
+document.getElementById("password").value
+
+const { data, error } =
+await supabaseClient.auth.signInWithPassword({
+
+email,
+password
+
+})
+
+if(error){
+
+alert(error.message)
+
+}else{
+
+alert("Login berhasil!")
+
+}
+
+}
 
 </script>
 </body>
