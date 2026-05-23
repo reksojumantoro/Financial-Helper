@@ -1698,6 +1698,17 @@ alert("Register berhasil!")
 }
 
 }
+  async function checkUser(){
+
+const {
+data:{user}
+}
+=
+await supabaseClient.auth.getUser()
+
+console.log(user)
+
+}
 
 async function loginUser(){
 
@@ -1722,7 +1733,7 @@ alert(error.message)
 }else{
 
 alert("Login berhasil!")
-
+checkUser()
 }
 
 }
