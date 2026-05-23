@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#534AB7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Decision Wealth">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+<title>Decision Wealth</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root {
+  --purple:#534AB7; --purple-light:#EEEDFE; --purple-dark:#3C3489;
+  --green:#1D9E75; --green-light:#EAF3DE; --green-dark:#0F6E56;
+  --red:#E24B4A; --red-light:#FCEBEB; --red-dark:#A32D2D;
+  --amber:#BA7517; --amber-light:#FAEEDA; --amber-dark:#854F0B;
+  --gray-bg:#f5f5f5; --card:#fff; --border:rgba(0,0,0,0.1);
+  --text:#1a1a1a; --text2:#666; --text3:#999;
+  --surface:#f8f8f8;
+  --safe-top: env(safe-area-inset-top);
+  --safe-bot: env(safe-area-inset-bottom);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gray-bg:#111; --card:#1c1c1e; --border:rgba(255,255,255,0.12);
+    --text:#f0f0f0; --text2:#aaa; --text3:#666;
+    --surface:#2c2c2e; --purple-light:#2a2660; --green-light:#0d3020;
+    --red-light:#3a1010; --amber-light:#3a2500;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--gray-bg);color:var(--text);font-size:15px;-webkit-font-smoothing:antialiased}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:var(--card);position:relative;overflow:hidden}
+.screen{display:none;flex:1;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(64px + var(--safe-bot, 0px))}
+.screen.active{display:flex}
+/* Top bar */
+.topbar{padding:calc(16px + var(--safe-top,0px)) 16px 12px;background:var(--card);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:50;flex-shrink:0}
+.topbar-row{display:flex;justify-content:space-between;align-items:center}
+.topbar h2{font-size:20px;font-weight:600;letter-spacing:-0.3px}
+.topbar p{font-size:13px;color:var(--text2);margin-top:2px}
+/* Nav */
+.bottom-nav{position:sticky;bottom:0;left:0;right:0;background:var(--card);border-top:0.5px solid var(--border);display:none;z-index:100;padding-bottom:var(--safe-bot,0px)}
+.bottom-nav.visible{display:flex}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;cursor:pointer;gap:3px;border:none;background:transparent;color:var(--text2);transition:color 0.15s;font-size:10px;font-weight:500}
+.nav-item.active{color:var(--purple)}
+.nav-item i{font-size:22px}
+/* Cards */
+.card{background:var(--card);border-radius:16px;border:0.5px solid var(--border);padding:16px;margin:8px 16px}
+.card-flush{background:var(--card);border-radius:16px;border:0.5px solid var(--border);margin:8px 16px;overflow:hidden}
+/* Hero */
+.hero{background:var(--purple);border-radius:20px;padding:22px 20px;margin:12px 16px;color:#fff}
+.hero .label{font-size:12px;opacity:0.75;text-transform:uppercase;letter-spacing:0.6px}
+.hero .amount{font-size:32px;font-weight:700;margin:5px 0;letter-spacing:-1px;transition:all 0.2s}
+.hero .amount.hidden-val::after{content:'••••••';font-size:28px;letter-spacing:4px}
+.hero .amount.hidden-val span{display:none}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.hero-stat{background:rgba(255,255,255,0.15);border-radius:12px;padding:12px}
+.hero-stat .hs-label{font-size:11px;opacity:0.8}
+.hero-stat .hs-val{font-size:17px;font-weight:600;margin-top:3px}
+/* Section */
+.sec-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 6px}
+.sec-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
+.sec-action{font-size:13px;color:var(--purple);font-weight:500;background:none;border:none;cursor:pointer}
+/* Wallet chips */
+.wallet-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:0.5px solid var(--border)}
+.wallet-row:last-child{border-bottom:none}
+.w-icon{width:40px;height:40px;border-radius:12px;background:var(--purple-light);display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--purple);flex-shrink:0}
+.w-icon.bank{background:var(--purple-light);color:var(--purple)}
+.w-icon.ewallet{background:var(--green-light);color:var(--green)}
+.w-icon.cash{background:var(--amber-light);color:var(--amber)}
+.w-info{flex:1;min-width:0}
+.w-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.w-type{font-size:12px;color:var(--text2);margin-top:1px}
+.w-amount{font-weight:600;font-size:15px;flex-shrink:0}
+/* Transactions */
+.tx-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--border)}
+.tx-row:last-child{border-bottom:none}
+.tx-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tx-icon.expense{background:var(--red-light);color:var(--red)}
+.tx-icon.income{background:var(--green-light);color:var(--green)}
+.tx-icon.transfer{background:var(--purple-light);color:var(--purple)}
+.tx-info{flex:1;min-width:0}
+.tx-cat{font-weight:600;font-size:14px}
+.tx-meta{font-size:12px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-right{text-align:right;flex-shrink:0}
+.tx-amount{font-weight:600;font-size:15px}
+.tx-amount.neg{color:var(--red)}
+.tx-amount.pos{color:var(--green)}
+.tx-amount.neu{color:var(--purple)}
+.tx-date{font-size:11px;color:var(--text3);margin-top:2px}
+/* Insight cards */
+.insight-row{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-bottom:0.5px solid var(--border)}
+.insight-row:last-child{border-bottom:none}
+.ins-emoji{font-size:22px;flex-shrink:0;margin-top:1px}
+.ins-text{font-size:13px;line-height:1.5;flex:1;color:var(--text)}
+/* Goal */
+.goal-row{padding:14px 16px;border-bottom:0.5px solid var(--border)}
+.goal-row:last-child{border-bottom:none}
+.goal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.goal-name{font-weight:600;font-size:14px}
+.goal-pct{font-size:13px;color:var(--purple);font-weight:600}
+.bar-bg{background:var(--border);border-radius:4px;height:7px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:var(--purple);transition:width 0.4s}
+.bar-fill.complete{background:var(--green)}
+.goal-footer{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-top:5px}
+/* Wishlist */
+.wish-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:0.5px solid var(--border)}
+.wish-row:last-child{border-bottom:none}
+.wish-info{flex:1;min-width:0}
+.wish-name{font-weight:600;font-size:14px}
+.wish-price{font-size:12px;color:var(--text2);margin-top:2px}
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge.waiting{background:var(--amber-light);color:var(--amber-dark)}
+.badge.cancelled{background:var(--red-light);color:var(--red-dark)}
+.badge.purchased{background:var(--green-light);color:var(--green-dark)}
+/* Modals */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 20px calc(20px + var(--safe-bot,0px))}
+.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px}
+.sheet h3{font-size:18px;font-weight:700;margin-bottom:16px}
+.sheet-close{position:absolute;top:20px;right:20px;background:var(--surface);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text2)}
+/* Form */
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:6px}
+.form-input{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;background:var(--surface);color:var(--text);outline:none;transition:border-color 0.2s;-webkit-appearance:none;appearance:none}
+.form-input:focus{border-color:var(--purple)}
+.form-input.big{font-size:28px;font-weight:700;letter-spacing:-0.5px;padding:14px;text-align:center}
+/* Type tabs */
+.type-tabs{display:flex;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;gap:2px}
+.type-tab{flex:1;padding:9px 4px;text-align:center;border-radius:9px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.15s}
+.type-tab.active.expense{background:var(--red-light);color:var(--red-dark)}
+.type-tab.active.income{background:var(--green-light);color:var(--green-dark)}
+.type-tab.active.transfer{background:var(--purple-light);color:var(--purple-dark)}
+/* Chips */
+.chip-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{padding:7px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text);transition:all 0.15s;font-weight:500}
+.chip.sel{background:var(--purple-light);border-color:var(--purple);color:var(--purple-dark)}
+.chip.sel.neg{background:var(--red-light);border-color:var(--red);color:var(--red-dark)}
+/* Buttons */
+.btn{width:100%;padding:15px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all 0.15s;letter-spacing:0.1px}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-danger{background:var(--red-light);color:var(--red-dark)}
+.btn-ghost{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+.btn-sm{padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--purple-light);color:var(--purple-dark)}
+.btn-sm.danger{background:var(--red-light);color:var(--red-dark)}
+/* FAB */
+.fab{position:fixed;bottom:calc(76px + var(--safe-bot,0px));right:max(calc(50% - 220px), 20px);width:56px;height:56px;border-radius:50%;background:var(--purple);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:26px;box-shadow:0 6px 20px rgba(83,74,183,0.45);z-index:90;transition:transform 0.15s}
+.fab.visible{display:flex}
+.fab:active{transform:scale(0.92)}
+/* Score ring */
+.score-hero{display:flex;flex-direction:column;align-items:center;padding:24px 16px 16px}
+.score-num{font-size:64px;font-weight:800;color:var(--purple);line-height:1;letter-spacing:-2px}
+.score-lbl{font-size:14px;color:var(--text2);margin-top:4px}
+.score-badge{display:inline-block;padding:7px 20px;border-radius:20px;background:var(--purple-light);color:var(--purple-dark);font-size:14px;font-weight:700;margin-top:10px}
+/* Personality */
+.personality-card{background:linear-gradient(135deg,var(--green),var(--green-dark));border-radius:16px;padding:18px;margin:0 16px 8px;color:#fff}
+.per-type{font-size:20px;font-weight:700;margin-bottom:4px}
+.per-desc{font-size:13px;opacity:0.9;line-height:1.5}
+/* Saved money */
+.saved-card{background:linear-gradient(135deg,var(--green),#085041);border-radius:16px;padding:22px;margin:8px 16px;color:#fff;text-align:center}
+.saved-card .s-lbl{font-size:12px;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px}
+.saved-card .s-amt{font-size:36px;font-weight:800;margin:6px 0 2px;letter-spacing:-1px}
+/* Metrics grid */
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin:8px 0}
+.metric-card{background:var(--surface);border-radius:14px;padding:14px}
+.metric-card .mc-lbl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.4px}
+.metric-card .mc-val{font-size:20px;font-weight:700;margin-top:5px}
+.metric-card .mc-val.green{color:var(--green)}
+.metric-card .mc-val.red{color:var(--red)}
+.metric-card .mc-val.purple{color:var(--purple)}
+/* Level */
+.level-card{display:flex;align-items:center;gap:12px;background:var(--purple-light);border-radius:14px;padding:14px;margin:0 16px 8px}
+.level-emoji{font-size:28px}
+.level-name{font-size:15px;font-weight:700;color:var(--purple-dark)}
+.level-sub{font-size:12px;color:var(--purple);margin-top:2px}
+/* Achievement */
+.ach-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--border)}
+.ach-row:last-child{border-bottom:none}
+.ach-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--surface)}
+.ach-icon.done{background:var(--green-light)}
+.ach-info{flex:1}
+.ach-name{font-weight:600;font-size:13px}
+.ach-desc{font-size:12px;color:var(--text2);margin-top:1px}
+/* Onboard */
+.onboard-wrap{display:flex;flex-direction:column;height:100%;padding:calc(48px + var(--safe-top,0px)) 28px calc(40px + var(--safe-bot,0px));overflow-y:auto}
+.ob-logo{font-size:36px;font-weight:800;color:var(--purple);letter-spacing:-1px}
+.ob-tagline{font-size:15px;color:var(--text2);margin-top:6px;line-height:1.5}
+.ob-steps{display:flex;gap:5px;margin:24px 0}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all 0.3s}
+.ob-dot.active{background:var(--purple);width:24px;border-radius:4px}
+.ob-step{display:none;flex-direction:column;flex:1}
+.ob-step.active{display:flex}
+.ob-step-title{font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-0.4px}
+.ob-step-sub{font-size:14px;color:var(--text2);margin-bottom:22px;line-height:1.5}
+.ob-actions{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:20px}
+/* Profile settings row */
+.pref-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:0.5px solid var(--border);cursor:pointer}
+.pref-row:last-child{border-bottom:none}
+.pref-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pref-label{flex:1;font-size:14px;font-weight:500}
+.pref-val{font-size:13px;color:var(--text2)}
+/* Empty states */
+.empty{padding:40px 20px;text-align:center;color:var(--text2);font-size:14px;line-height:1.6}
+.empty i{font-size:40px;display:block;margin-bottom:10px;opacity:0.3}
+/* Divider */
+.divider{height:0.5px;background:var(--border);margin:0 16px}
+/* Hide amount toggle */
+.hide-toggle{background:rgba(255,255,255,0.2);border:none;border-radius:20px;padding:5px 12px;font-size:12px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:500}
+/* Wallet select in form */
+.wallet-select-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto}
+.wallet-select-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;background:var(--surface);transition:all 0.15s}
+.wallet-select-item.sel{border-color:var(--purple);background:var(--purple-light)}
+.wsi-name{font-weight:600;font-size:14px}
+.wsi-bal{font-size:12px;color:var(--text2)}
+/* Delete btn */
+.del-btn{background:none;border:none;cursor:pointer;padding:6px;color:var(--text3);font-size:20px}
+.del-btn:active{color:var(--red)}
+/* Regret */
+.regret-row{padding:12px 16px;border-bottom:0.5px solid var(--border)}
+.rg-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.rg-btns{display:flex;gap:6px}
+.rg-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:12px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text)}
+.rg-btn.yes{background:var(--green-light);border-color:var(--green);color:var(--green-dark)}
+.rg-btn.no{background:var(--red-light);border-color:var(--red);color:var(--red-dark)}
+.rg-btn.neutral{background:var(--amber-light);border-color:var(--amber);color:var(--amber-dark)}
+/* Toast */
+.toast{position:fixed;top:calc(20px + var(--safe-top,0px));left:50%;transform:translateX(-50%) translateY(-80px);background:#222;color:#fff;padding:12px 22px;border-radius:30px;font-size:14px;font-weight:500;z-index:999;transition:transform 0.3s;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* Wealth story */
+.story-card{background:var(--surface);border-radius:14px;padding:16px;margin:8px 16px;border:0.5px solid var(--border)}
+.story-card p{font-size:14px;line-height:1.7;color:var(--text)}
+/* Regret analysis summary */
+.regret-summary{display:flex;gap:8px;padding:8px 16px;flex-wrap:wrap}
+.rg-pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600}
+/* Recurring */
+.rec-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:0.5px solid var(--border)}
+.rec-row:last-child{border-bottom:none}
+.rec-info{flex:1}
+.rec-name{font-weight:600;font-size:14px}
+.rec-sub{font-size:12px;color:var(--text2);margin-top:2px}
+/* Transfer wallet swapper */
+.swap-btn{background:var(--purple-light);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--purple);font-size:20px;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ONBOARDING -->
+<div id="ob-screen" class="screen active">
+<div class="onboard-wrap">
+  <div class="ob-logo">Decision Wealth</div>
+  <p class="ob-tagline">Platform kecerdasan keputusan finansial pribadi Anda.</p>
+  <div class="ob-steps">
+    <div class="ob-dot active" id="od0"></div>
+    <div class="ob-dot" id="od1"></div>
+    <div class="ob-dot" id="od2"></div>
+    <div class="ob-dot" id="od3"></div>
+  </div>
+
+  <!-- Step 0: Name -->
+  <div class="ob-step active" id="os0">
+    <div class="ob-step-title">Halo! 👋<br>Siapa nama kamu?</div>
+    <div class="ob-step-sub">Kami akan mempersonalisasi pengalaman finansialmu.</div>
+    <div class="form-group">
+      <label class="form-label">Nama</label>
+      <input class="form-input" id="ob-name" type="text" placeholder="Nama kamu" autocomplete="name">
+    </div>
+    <div class="ob-actions">
+      <button class="btn btn-primary" onclick="obNext()">Lanjut →</button>
+    </div>
+  </div>
+
+  <!-- Step 1: Wallets -->
+  <div class="ob-step" id="os1">
+    <div class="ob-step-title">Di mana uangmu berada?</div>
+    <div class="ob-step-sub">Tambah wallet untuk melacak semua asetmu di satu tempat.</div>
+    <div id="ob-wallet-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    <button class="btn btn-ghost" onclick="obAddWallet()" style="margin-top:10px"><i class="ti ti-plus"></i> Tambah Wallet</button>
+    <div class="ob-actions">
+      <button class="btn btn-primary" onclick="obNext()">Lanjut →</button>
+      <button class="btn btn-ghost" onclick="obSkip()">Lewati</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Income -->
+  <div class="ob-step" id="os2">
+    <div class="ob-step-title">Berapa penghasilan bulananmu?</div>
+    <div class="ob-step-sub">Digunakan untuk menghitung saving rate dan insight keuangan.</div>
+    <div class="form-group">
+      <label class="form-label">Penghasilan Bulanan (Rp)</label>
+      <input class="form-input big" id="ob-income" type="number" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="ob-actions">
+      <button class="btn btn-primary" onclick="obNext()">Lanjut →</button>
+      <button class="btn btn-ghost" onclick="obSkip()">Lewati</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Goal -->
+  <div class="ob-step" id="os3">
+    <div class="ob-step-title">Apa goal finansial pertamamu?</div>
+    <div class="ob-step-sub">Mulai dengan satu goal. Kamu bisa tambah lebih banyak nanti.</div>
+    <div class="form-group">
+      <label class="form-label">Nama Goal</label>
+      <input class="form-input" id="ob-goal-name" type="text" placeholder="Contoh: Dana Darurat">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Target (Rp)</label>
+      <input class="form-input big" id="ob-goal-amt" type="number" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="ob-actions">
+      <button class="btn btn-primary" onclick="obFinish()">Mulai →</button>
+      <button class="btn btn-ghost" onclick="obSkip()">Lewati</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- HOME -->
+<div id="home-screen" class="screen">
+  <div style="padding:calc(12px + var(--safe-top,0px)) 16px 0;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:13px;color:var(--text2)" id="home-greeting">Selamat datang</div>
+      <div style="font-size:20px;font-weight:800;letter-spacing:-0.3px" id="home-name">—</div>
+    </div>
+    <button class="hide-toggle" id="hide-btn" onclick="toggleHide()" style="background:var(--purple-light);color:var(--purple)"><i class="ti ti-eye" id="hide-icon"></i> <span id="hide-label">Sembunyikan</span></button>
+  </div>
+  <div class="hero" id="home-hero">
+    <div class="label">Total Aset</div>
+    <div class="amount" id="hero-total"><span></span></div>
+    <div style="font-size:12px;opacity:0.75;margin-top:2px" id="hero-wallets-count"></div>
+    <div class="hero-grid">
+      <div class="hero-stat"><div class="hs-label">Pemasukan</div><div class="hs-val" id="hero-income"></div></div>
+      <div class="hero-stat"><div class="hs-label">Pengeluaran</div><div class="hs-val" id="hero-expense"></div></div>
+    </div>
+  </div>
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="mc-lbl">Net Cash Flow</div><div class="mc-val" id="m-cashflow">Rp 0</div></div>
+    <div class="metric-card"><div class="mc-lbl">Saving Rate</div><div class="mc-val" id="m-saverate">0%</div></div>
+  </div>
+  <div class="sec-header"><span class="sec-title">Wallet</span><button class="sec-action" onclick="navigate('wallet')">Lihat semua</button></div>
+  <div class="card-flush" id="home-wallet-list"></div>
+  <div class="sec-header"><span class="sec-title">Goals</span><button class="sec-action" onclick="navigate('profile')">Lihat semua</button></div>
+  <div class="card-flush" id="home-goal-list"></div>
+  <div class="sec-header"><span class="sec-title">Insight Hari Ini</span></div>
+  <div class="card-flush" id="home-insight-list"></div>
+  <div class="sec-header"><span class="sec-title">Transaksi Terakhir</span><button class="sec-action" onclick="showAllTx()">Lihat semua</button></div>
+  <div class="card-flush" id="home-tx-list"></div>
+  <div style="height:12px"></div>
+</div>
+
+<!-- WALLET -->
+<div id="wallet-screen" class="screen">
+  <div class="topbar">
+    <div class="topbar-row">
+      <h2>Wallet</h2>
+      <button class="btn-sm" onclick="openAddWallet()"><i class="ti ti-plus"></i> Tambah</button>
+    </div>
+  </div>
+  <div style="padding:16px">
+    <div style="background:var(--purple);border-radius:16px;padding:20px;color:#fff">
+      <div style="font-size:12px;opacity:0.8;text-transform:uppercase;letter-spacing:0.5px">Total Saldo Semua Wallet</div>
+      <div style="font-size:30px;font-weight:800;margin:6px 0;letter-spacing:-1px" id="wallet-total">Rp 0</div>
+      <div style="font-size:13px;opacity:0.8" id="wallet-count-lbl">0 wallet</div>
+    </div>
+  </div>
+  <div class="card-flush" id="wallet-list"></div>
+  <div style="height:80px"></div>
+</div>
+
+<!-- JOURNAL -->
+<div id="journal-screen" class="screen">
+  <div class="topbar">
+    <div class="topbar-row">
+      <div><h2>Journal</h2><p>Keputusan & perilaku finansial</p></div>
+    </div>
+  </div>
+
+  <div class="sec-header"><span class="sec-title">Delayed Purchase</span><button class="sec-action" onclick="openAddWishlist()">+ Tambah</button></div>
+  <div class="card-flush" id="wishlist-list"></div>
+  <div class="saved-card" id="saved-card">
+    <div class="s-lbl">Total Uang Dihemat</div>
+    <div class="s-amt" id="saved-amt">Rp 0</div>
+    <div style="font-size:12px;opacity:0.8;margin-top:4px">dari pembelian yang dibatalkan</div>
+  </div>
+
+  <div class="sec-header"><span class="sec-title">Riwayat Keputusan</span></div>
+  <div class="card-flush" id="journal-tx-list"></div>
+
+  <div class="sec-header"><span class="sec-title">Regret Analysis</span></div>
+  <div style="padding:6px 16px 8px;font-size:13px;color:var(--text2)">Transaksi di bawah 30 hari. Apakah keputusan ini masih tepat?</div>
+  <div class="card-flush" id="regret-list"></div>
+  <div style="height:12px"></div>
+</div>
+
+<!-- INSIGHT -->
+<div id="insight-screen" class="screen">
+  <div class="topbar"><h2>Insight</h2><p>Analisis perilaku finansialmu</p></div>
+  <div class="score-hero">
+    <div class="score-num" id="ins-score">—</div>
+    <div class="score-lbl">Financial Decision Score</div>
+    <div class="score-badge" id="ins-score-badge">—</div>
+  </div>
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="mc-lbl">Saving Rate</div><div class="mc-val green" id="ins-saverate">0%</div></div>
+    <div class="metric-card"><div class="mc-lbl">Pengeluaran Impulsif</div><div class="mc-val red" id="ins-impulse">0%</div></div>
+  </div>
+  <div class="sec-header"><span class="sec-title">Money Personality</span></div>
+  <div id="personality-wrap"></div>
+  <div class="sec-header"><span class="sec-title">Sherlock Insights</span></div>
+  <div class="card-flush" id="ins-sherlock"></div>
+  <div class="sec-header"><span class="sec-title">Analisis Emosi</span></div>
+  <div class="card-flush" id="ins-emotion"></div>
+  <div class="sec-header"><span class="sec-title">Analisis Alasan</span></div>
+  <div class="card-flush" id="ins-reason"></div>
+  <div class="sec-header"><span class="sec-title">Wealth Story</span></div>
+  <div id="wealth-story"></div>
+  <div class="sec-header"><span class="sec-title">Level & Pencapaian</span></div>
+  <div id="ins-level"></div>
+  <div class="card-flush" id="ins-achievements"></div>
+  <div style="height:12px"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile-screen" class="screen">
+  <div class="topbar"><h2>Profil</h2></div>
+  <div style="padding:16px;display:flex;align-items:center;gap:14px">
+    <div id="prof-avatar" style="width:56px;height:56px;border-radius:50%;background:var(--purple-light);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--purple);flex-shrink:0"></div>
+    <div><div style="font-size:18px;font-weight:800" id="prof-name">—</div><div style="font-size:13px;color:var(--text2);margin-top:2px">Decision Wealth Member</div></div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="sec-header"><span class="sec-title">Keuangan</span></div>
+  <div class="card-flush">
+    <div class="pref-row" onclick="editMonthlyIncome()">
+      <div class="pref-icon" style="background:var(--green-light)"><i class="ti ti-cash" style="color:var(--green)"></i></div>
+      <div class="pref-label">Penghasilan Bulanan</div>
+      <div class="pref-val" id="prof-income">—</div>
+      <i class="ti ti-chevron-right" style="color:var(--text3);font-size:16px"></i>
+    </div>
+    <div class="pref-row">
+      <div class="pref-icon" style="background:var(--purple-light)"><i class="ti ti-trending-up" style="color:var(--purple)"></i></div>
+      <div class="pref-label">Saving Rate Bulan Ini</div>
+      <div class="pref-val green" id="prof-saverate" style="font-weight:700">0%</div>
+    </div>
+    <div class="pref-row">
+      <div class="pref-icon" style="background:var(--amber-light)"><i class="ti ti-receipt" style="color:var(--amber)"></i></div>
+      <div class="pref-label">Total Transaksi</div>
+      <div class="pref-val" id="prof-tx-count">0</div>
+    </div>
+  </div>
+
+  <div class="sec-header"><span class="sec-title">Recurring Income</span><button class="sec-action" onclick="openRecurring()">+ Tambah</button></div>
+  <div class="card-flush" id="recurring-list"></div>
+
+  <div class="sec-header"><span class="sec-title">Goals</span><button class="sec-action" onclick="openAddGoal()">+ Tambah</button></div>
+  <div class="card-flush" id="prof-goals"></div>
+
+  <div class="sec-header"><span class="sec-title">Pengaturan</span></div>
+  <div class="card-flush">
+    <div class="pref-row" onclick="editName()">
+      <div class="pref-icon" style="background:var(--surface)"><i class="ti ti-user"></i></div>
+      <div class="pref-label">Ubah Nama</div>
+      <i class="ti ti-chevron-right" style="color:var(--text3);font-size:16px"></i>
+    </div>
+    <div class="pref-row" onclick="exportData()">
+      <div class="pref-icon" style="background:var(--green-light)"><i class="ti ti-download" style="color:var(--green)"></i></div>
+      <div class="pref-label">Export Data (JSON)</div>
+      <i class="ti ti-chevron-right" style="color:var(--text3);font-size:16px"></i>
+    </div>
+    <div class="pref-row" onclick="resetApp()">
+      <div class="pref-icon" style="background:var(--red-light)"><i class="ti ti-trash" style="color:var(--red)"></i></div>
+      <div class="pref-label" style="color:var(--red)">Reset Semua Data</div>
+      <i class="ti ti-chevron-right" style="color:var(--text3);font-size:16px"></i>
+    </div>
+  </div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- NAV + FAB -->
+<nav class="bottom-nav" id="main-nav">
+  <button class="nav-item active" id="nav-home" onclick="navigate('home')"><i class="ti ti-home"></i><span>Home</span></button>
+  <button class="nav-item" id="nav-wallet" onclick="navigate('wallet')"><i class="ti ti-wallet"></i><span>Wallet</span></button>
+  <button class="nav-item" id="nav-journal" onclick="navigate('journal')"><i class="ti ti-book"></i><span>Journal</span></button>
+  <button class="nav-item" id="nav-insight" onclick="navigate('insight')"><i class="ti ti-bulb"></i><span>Insight</span></button>
+  <button class="nav-item" id="nav-profile" onclick="navigate('profile')"><i class="ti ti-user"></i><span>Profil</span></button>
+</nav>
+<button class="fab" id="fab" onclick="openTxSheet()"><i class="ti ti-plus"></i></button>
+
+<!-- OVERLAYS -->
+
+<!-- Add Transaction -->
+<div class="overlay" id="tx-sheet">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeTxSheet()"><i class="ti ti-x"></i></button>
+    <h3>Tambah Transaksi</h3>
+    <div class="type-tabs">
+      <button class="type-tab active expense" id="ttab-expense" onclick="setTxTab('expense')">Pengeluaran</button>
+      <button class="type-tab income" id="ttab-income" onclick="setTxTab('income')">Pemasukan</button>
+      <button class="type-tab transfer" id="ttab-transfer" onclick="setTxTab('transfer')">Transfer</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nominal (Rp)</label>
+      <input class="form-input big" id="tx-amount" type="number" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="form-group" id="tx-cat-group">
+      <label class="form-label">Kategori</label>
+      <div class="chip-wrap" id="tx-cat-chips"></div>
+    </div>
+    <div class="form-group" id="tx-wallet-group">
+      <label class="form-label" id="tx-wallet-label">Wallet</label>
+      <div class="wallet-select-list" id="tx-wallet-list"></div>
+    </div>
+    <div class="form-group" id="tx-dest-group" style="display:none">
+      <label class="form-label">Wallet Tujuan</label>
+      <div class="wallet-select-list" id="tx-dest-list"></div>
+    </div>
+    <div class="form-group" id="tx-reason-group">
+      <label class="form-label">Alasan (opsional)</label>
+      <div class="chip-wrap" id="tx-reason-chips">
+        <div class="chip" onclick="selReason(this,'Need')">Need</div>
+        <div class="chip" onclick="selReason(this,'Investment')">Investment</div>
+        <div class="chip" onclick="selReason(this,'Self Reward')">Self Reward</div>
+        <div class="chip" onclick="selReason(this,'Discount')">Discount</div>
+        <div class="chip" onclick="selReason(this,'Impulse')">Impulse ⚡</div>
+        <div class="chip" onclick="selReason(this,'FOMO')">FOMO</div>
+        <div class="chip" onclick="selReason(this,'Emergency')">Emergency</div>
+        <div class="chip" onclick="selReason(this,'Others')">Others</div>
+      </div>
+    </div>
+    <div class="form-group" id="tx-emotion-group">
+      <label class="form-label">Emosi (opsional)</label>
+      <div class="chip-wrap" id="tx-emotion-chips">
+        <div class="chip" onclick="selEmotion(this,'Happy','😀')">😀 Happy</div>
+        <div class="chip" onclick="selEmotion(this,'Neutral','😐')">😐 Neutral</div>
+        <div class="chip" onclick="selEmotion(this,'Anxious','😟')">😟 Anxious</div>
+        <div class="chip" onclick="selEmotion(this,'Stress','😩')">😩 Stress</div>
+        <div class="chip" onclick="selEmotion(this,'Angry','😤')">😤 Angry</div>
+        <div class="chip" onclick="selEmotion(this,'Sad','😔')">😔 Sad</div>
+        <div class="chip" onclick="selEmotion(this,'Motivated','🔥')">🔥 Motivated</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Catatan (opsional)</label>
+      <input class="form-input" id="tx-note" type="text" placeholder="Catatan...">
+    </div>
+    <button class="btn btn-primary" onclick="saveTx()">Simpan Transaksi</button>
+    <div style="height:6px"></div>
+  </div>
+</div>
+
+<!-- Add Wallet -->
+<div class="overlay" id="wallet-sheet">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('wallet-sheet')"><i class="ti ti-x"></i></button>
+    <h3>Tambah Wallet</h3>
+    <div class="form-group">
+      <label class="form-label">Nama Wallet</label>
+      <input class="form-input" id="w-name" type="text" placeholder="Nama wallet (BCA, GoPay, Cash, dll)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipe</label>
+      <div class="chip-wrap">
+        <div class="chip sel" id="wtype-Bank" onclick="selWType(this,'Bank')">🏦 Bank</div>
+        <div class="chip" id="wtype-E-Wallet" onclick="selWType(this,'E-Wallet')">📱 E-Wallet</div>
+        <div class="chip" id="wtype-Cash" onclick="selWType(this,'Cash')">💵 Cash</div>
+        <div class="chip" id="wtype-Custom" onclick="selWType(this,'Custom')">✨ Custom</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Saldo Awal (Rp)</label>
+      <input class="form-input big" id="w-balance" type="number" inputmode="numeric" placeholder="0">
+    </div>
+    <button class="btn btn-primary" onclick="saveWallet()">Simpan Wallet</button>
+  </div>
+</div>
+
+<!-- Add Goal -->
+<div class="overlay" id="goal-sheet">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('goal-sheet')"><i class="ti ti-x"></i></button>
+    <h3>Tambah Goal</h3>
+    <div class="form-group">
+      <label class="form-label">Nama Goal</label>
+      <input class="form-input" id="g-name" type="text" placeholder="Dana Darurat, Rumah, Liburan...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Target (Rp)</label>
+      <input class="form-input big" id="g-target" type="number" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Progress Saat Ini (Rp)</label>
+      <input class="form-input" id="g-progress" type="number" inputmode="numeric" placeholder="0" value="0">
+    </div>
+    <button class="btn btn-primary" onclick="saveGoal()">Simpan Goal</button>
+  </div>
+</div>
+
+<!-- Add Wishlist -->
+<div class="overlay" id="wish-sheet">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('wish-sheet')"><i class="ti ti-x"></i></button>
+    <h3>Tambah Delayed Purchase</h3>
+    <div class="form-group">
+      <label class="form-label">Nama Item</label>
+      <input class="form-input" id="ws-name" type="text" placeholder="Apa yang ingin dibeli?">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Estimasi Harga (Rp)</label>
+      <input class="form-input big" id="ws-price" type="number" inputmode="numeric" placeholder="0">
+    </div>
+    <button class="btn btn-primary" onclick="saveWish()">Tambah ke Wishlist</button>
+  </div>
+</div>
+
+<!-- Goal Progress Sheet -->
+<div class="overlay" id="goal-progress-sheet">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('goal-progress-sheet')"><i class="ti ti-x"></i></button>
+    <h3 id="gp-title">Update Progress</h3>
+    <div style="background:var(--surface);border-radius:12px;padding:12px;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--text2)">Progress saat ini</div>
+      <div style="font-size:20px;font-weight:700;color:var(--purple);margin-top:2px" id="gp-current">Rp 0</div>
+      <div class="bar-bg" style="margin-top:8px"><div class="bar-fill" id="gp-bar" style="width:0%"></div></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px" id="gp-remaining"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tambah Nominal (Rp)</label>
+      <input class="form-input big" id="gp-amount" type="number" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Dari Wallet</label>
+      <div class="wallet-select-list" id="gp-wallet-list"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveGoalProgress()">Simpan Progress</button>
+  </div>
+</div>
+
+<!-- Recurring Income Sheet -->
+<div class="overlay" id="recurring-sheet">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('recurring-sheet')"><i class="ti ti-x"></i></button>
+    <h3>Recurring Income</h3>
+    <div class="form-group">
+      <label class="form-label">Nama</label>
+      <input class="form-input" id="rec-name" type="text" placeholder="Contoh: Gaji Bulanan">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nominal (Rp)</label>
+      <input class="form-input big" id="rec-amount" type="number" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tanggal (tiap bulan)</label>
+      <input class="form-input" id="rec-date" type="number" inputmode="numeric" min="1" max="31" placeholder="1–31">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ke Wallet</label>
+      <div class="wallet-select-list" id="rec-wallet-list"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveRecurring()">Simpan</button>
+  </div>
+</div>
+
+<!-- All Transactions Sheet -->
+<div class="overlay" id="all-tx-sheet">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('all-tx-sheet')"><i class="ti ti-x"></i></button>
+    <h3>Semua Transaksi</h3>
+    <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap" id="tx-filter-row">
+      <div class="chip sel" onclick="filterTx(this,'all')">Semua</div>
+      <div class="chip" onclick="filterTx(this,'expense')">Pengeluaran</div>
+      <div class="chip" onclick="filterTx(this,'income')">Pemasukan</div>
+      <div class="chip" onclick="filterTx(this,'transfer')">Transfer</div>
+    </div>
+    <div id="all-tx-list"></div>
+  </div>
+</div>
+
+<!-- Edit field -->
+<div class="overlay" id="edit-sheet">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('edit-sheet')"><i class="ti ti-x"></i></button>
+    <h3 id="edit-title">Edit</h3>
+    <div class="form-group">
+      <label class="form-label" id="edit-label">Nilai</label>
+      <input class="form-input" id="edit-input" type="text" placeholder="">
+    </div>
+    <button class="btn btn-primary" id="edit-save-btn">Simpan</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let S = {
+  user: { name: '', monthly_income: 0 },
+  wallets: [],
+  transactions: [],
+  goals: [],
+  wishlist: [],
+  recurring: [],
+  regret_reviews: [],
+  hide_amounts: false,
+  current_screen: 'home',
+  _ob_step: 0,
+  _ob_wallets: []
+};
+
+const KEY = 'dw_state_v3';
+function saveState() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+function loadState() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) { const parsed = JSON.parse(raw); S = { ...S, ...parsed }; }
+  } catch(e) {}
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+const fmt = n => {
+  const v = Math.round(Number(n)||0);
+  return 'Rp ' + v.toLocaleString('id-ID');
+};
+const fmtShort = n => {
+  const v = Math.abs(Math.round(Number(n)||0));
+  if (v >= 1e9) return 'Rp ' + (v/1e9).toFixed(1) + 'M';
+  if (v >= 1e6) return 'Rp ' + (v/1e6).toFixed(1) + 'jt';
+  if (v >= 1e3) return 'Rp ' + (v/1e3).toFixed(0) + 'rb';
+  return 'Rp ' + v.toLocaleString('id-ID');
+};
+const pct = (a, b) => b === 0 ? 0 : Math.round(a / b * 100);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+const fmtDate = iso => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+};
+const today = () => new Date().toISOString();
+const greet = () => {
+  const h = new Date().getHours();
+  if (h < 11) return 'Selamat pagi';
+  if (h < 15) return 'Selamat siang';
+  if (h < 18) return 'Selamat sore';
+  return 'Selamat malam';
+};
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ─── COMPUTED ────────────────────────────────────────────────────────────────
+const totalBalance = () => S.wallets.reduce((s, w) => s + (w.balance || 0), 0);
+const totalIncome = () => S.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+const totalExpense = () => S.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+const netCashFlow = () => totalIncome() - totalExpense();
+const savingRate = () => {
+  const base = totalIncome() + (S.user.monthly_income || 0);
+  if (!base) return 0;
+  const spent = totalExpense();
+  const rate = Math.round((base - spent) / base * 100);
+  return Math.max(-100, Math.min(100, rate));
+};
+const walletById = id => S.wallets.find(w => w.id === id);
+
+// ─── CATEGORY ICONS ──────────────────────────────────────────────────────────
+const CAT_ICONS = {
+  Food:'ti-tools-kitchen-2', Transport:'ti-car', Bills:'ti-file-invoice',
+  Shopping:'ti-shopping-bag', Entertainment:'ti-device-gamepad-2',
+  Health:'ti-heart-rate-monitor', Education:'ti-school', Investment:'ti-chart-candle',
+  Others:'ti-dots', Salary:'ti-briefcase', Freelance:'ti-laptop',
+  Bonus:'ti-gift', Business:'ti-building-store', 'Investment Return':'ti-trending-up',
+  Transfer:'ti-arrows-left-right'
+};
+const catIcon = c => CAT_ICONS[c] || 'ti-circle';
+const walletTypeIcon = t => {
+  if (t === 'Bank') return 'ti-building-bank';
+  if (t === 'E-Wallet') return 'ti-device-mobile';
+  if (t === 'Cash') return 'ti-cash';
+  return 'ti-star';
+};
+const walletTypeClass = t => {
+  if (t === 'Bank') return 'bank';
+  if (t === 'E-Wallet') return 'ewallet';
+  if (t === 'Cash') return 'cash';
+  return '';
+};
+
+// ─── ONBOARDING ──────────────────────────────────────────────────────────────
+let obStep = 0;
+function obGoto(n) {
+  document.querySelectorAll('.ob-step').forEach((s, i) => s.classList.toggle('active', i === n));
+  document.querySelectorAll('.ob-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+  obStep = n;
+}
+function obNext() {
+  if (obStep === 0) {
+    S.user.name = document.getElementById('ob-name').value.trim();
+  } else if (obStep === 1) {
+    obSaveWallets();
+  } else if (obStep === 2) {
+    S.user.monthly_income = parseFloat(document.getElementById('ob-income').value) || 0;
+  }
+  if (obStep < 3) obGoto(obStep + 1);
+}
+function obSkip() {
+  if (obStep === 1) obSaveWallets();
+  if (obStep < 3) { obGoto(obStep + 1); return; }
+  obFinish();
+}
+function obSaveWallets() {
+  document.querySelectorAll('.ob-wallet-row').forEach(row => {
+    const name = row.querySelector('.ob-wname').value.trim();
+    const bal = parseFloat(row.querySelector('.ob-wbal').value) || 0;
+    const type = row.querySelector('.ob-wtype').value;
+    if (name) S.wallets.push({ id: uid(), name, type, balance: bal, initial_balance: bal });
+  });
+}
+function obAddWallet() {
+  const list = document.getElementById('ob-wallet-list');
+  const div = document.createElement('div');
+  div.className = 'ob-wallet-row';
+  div.style.cssText = 'display:flex;gap:6px;align-items:center';
+  div.innerHTML = `
+    <input class="form-input ob-wname" type="text" placeholder="Nama wallet" style="flex:2">
+    <select class="form-input ob-wtype" style="flex:1.5">
+      <option value="Bank">Bank</option>
+      <option value="E-Wallet">E-Wallet</option>
+      <option value="Cash">Cash</option>
+      <option value="Custom">Custom</option>
+    </select>
+    <input class="form-input ob-wbal" type="number" inputmode="numeric" placeholder="Saldo" style="flex:1.5">
+    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;flex-shrink:0"><i class="ti ti-x"></i></button>`;
+  list.appendChild(div);
+}
+function obFinish() {
+  const gname = document.getElementById('ob-goal-name').value.trim();
+  const gamt = parseFloat(document.getElementById('ob-goal-amt').value) || 0;
+  if (gname && gamt) S.goals.push({ id: uid(), name: gname, target: gamt, progress: 0, created: today() });
+  S.user.name = S.user.name || 'User';
+  saveState();
+  launchApp();
+}
+function launchApp() {
+  document.getElementById('ob-screen').classList.remove('active');
+  document.getElementById('main-nav').classList.add('visible');
+  document.getElementById('fab').classList.add('visible');
+  navigate('home');
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function navigate(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(screen + '-screen').classList.add('active');
+  document.getElementById('nav-' + screen).classList.add('active');
+  S.current_screen = screen;
+  saveState();
+  renderScreen(screen);
+}
+function renderScreen(s) {
+  if (s === 'home') renderHome();
+  else if (s === 'wallet') renderWallet();
+  else if (s === 'journal') renderJournal();
+  else if (s === 'insight') renderInsight();
+  else if (s === 'profile') renderProfile();
+}
+
+// ─── HIDE AMOUNTS ─────────────────────────────────────────────────────────────
+function toggleHide() {
+  S.hide_amounts = !S.hide_amounts;
+  saveState();
+  applyHide();
+  renderScreen(S.current_screen);
+}
+function applyHide() {
+  const h = S.hide_amounts;
+  document.getElementById('hide-icon').className = h ? 'ti ti-eye-off' : 'ti ti-eye';
+  document.getElementById('hide-label').textContent = h ? 'Tampilkan' : 'Sembunyikan';
+  document.getElementById('hero-total').className = 'amount' + (h ? ' hidden-val' : '');
+}
+function maskAmt(v) { return S.hide_amounts ? '••••' : fmt(v); }
+function maskShort(v) { return S.hide_amounts ? '••' : fmtShort(v); }
+
+// ─── RENDER HOME ─────────────────────────────────────────────────────────────
+function renderHome() {
+  document.getElementById('home-greeting').textContent = greet() + ',';
+  document.getElementById('home-name').textContent = S.user.name || '—';
+
+  const tb = totalBalance(), ti = totalIncome(), te = totalExpense(), nc = netCashFlow(), sr = savingRate();
+  document.getElementById('hero-total').innerHTML = `<span>${fmt(tb)}</span>`;
+  applyHide();
+  document.getElementById('hero-wallets-count').textContent = S.wallets.length + ' wallet aktif';
+  document.getElementById('hero-income').textContent = maskShort(ti);
+  document.getElementById('hero-expense').textContent = maskShort(te);
+  document.getElementById('m-cashflow').textContent = maskAmt(nc);
+  document.getElementById('m-cashflow').className = 'mc-val ' + (nc >= 0 ? 'green' : 'red');
+  document.getElementById('m-saverate').textContent = sr + '%';
+  document.getElementById('m-saverate').className = 'mc-val ' + (sr >= 20 ? 'green' : sr >= 0 ? 'purple' : 'red');
+
+  // Wallets (top 3)
+  const wl = document.getElementById('home-wallet-list');
+  if (!S.wallets.length) { wl.innerHTML = '<div class="empty"><i class="ti ti-wallet"></i>Belum ada wallet</div>'; }
+  else wl.innerHTML = S.wallets.slice(0, 3).map(w => walletRowHTML(w)).join('');
+
+  // Goals (top 2)
+  const gl = document.getElementById('home-goal-list');
+  if (!S.goals.length) { gl.innerHTML = '<div class="empty"><i class="ti ti-target"></i>Belum ada goal</div>'; }
+  else gl.innerHTML = S.goals.slice(0, 2).map(g => goalRowHTML(g)).join('');
+
+  // Insight
+  document.getElementById('home-insight-list').innerHTML = generateInsights(2).map(ins =>
+    `<div class="insight-row"><span class="ins-emoji">${ins.emoji}</span><div class="ins-text">${ins.text}</div></div>`
+  ).join('') || '<div class="empty">Mulai catat transaksi untuk insight personal</div>';
+
+  // Transactions (last 5)
+  const txl = document.getElementById('home-tx-list');
+  const recent = [...S.transactions].reverse().slice(0, 5);
+  if (!recent.length) { txl.innerHTML = '<div class="empty"><i class="ti ti-receipt"></i>Belum ada transaksi</div>'; }
+  else txl.innerHTML = recent.map(t => txRowHTML(t)).join('');
+}
+
+function walletRowHTML(w) {
+  const tc = walletTypeClass(w.type);
+  return `<div class="wallet-row">
+    <div class="w-icon ${tc}"><i class="ti ${walletTypeIcon(w.type)}"></i></div>
+    <div class="w-info"><div class="w-name">${esc(w.name)}</div><div class="w-type">${w.type}</div></div>
+    <div class="w-amount">${maskAmt(w.balance)}</div>
+  </div>`;
+}
+function goalRowHTML(g) {
+  const p = pct(g.progress, g.target);
+  const complete = g.progress >= g.target;
+  return `<div class="goal-row">
+    <div class="goal-top"><span class="goal-name">${esc(g.name)}</span><span class="goal-pct">${p}%</span></div>
+    <div class="bar-bg"><div class="bar-fill ${complete?'complete':''}" style="width:${Math.min(p,100)}%"></div></div>
+    <div class="goal-footer"><span>${maskAmt(g.progress)}</span><span>${maskAmt(g.target)}</span></div>
+  </div>`;
+}
+function txRowHTML(t) {
+  const neg = t.type === 'expense';
+  const sign = t.type === 'transfer' ? '' : (neg ? '−' : '+');
+  const cls = t.type === 'transfer' ? 'neu' : (neg ? 'neg' : 'pos');
+  const meta = [t.wallet, t.dest_wallet ? '→ ' + t.dest_wallet : '', t.reason, t.emotion_emoji].filter(Boolean).join(' · ');
+  return `<div class="tx-row">
+    <div class="tx-icon ${t.type}"><i class="ti ${catIcon(t.category)}"></i></div>
+    <div class="tx-info">
+      <div class="tx-cat">${esc(t.category)}</div>
+      <div class="tx-meta">${esc(meta)}</div>
+    </div>
+    <div class="tx-right">
+      <div class="tx-amount ${cls}">${sign}${maskShort(t.amount)}</div>
+      <div class="tx-date">${fmtDate(t.date)}</div>
+    </div>
+  </div>`;
+}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ─── RENDER WALLET ────────────────────────────────────────────────────────────
+function renderWallet() {
+  document.getElementById('wallet-total').textContent = maskAmt(totalBalance());
+  document.getElementById('wallet-count-lbl').textContent = S.wallets.length + ' wallet';
+  const el = document.getElementById('wallet-list');
+  if (!S.wallets.length) { el.innerHTML = '<div class="empty"><i class="ti ti-wallet"></i>Belum ada wallet.<br>Tambah wallet pertamamu!</div>'; return; }
+  el.innerHTML = S.wallets.map((w, i) => {
+    const tc = walletTypeClass(w.type);
+    return `<div class="wallet-row">
+      <div class="w-icon ${tc}"><i class="ti ${walletTypeIcon(w.type)}"></i></div>
+      <div class="w-info"><div class="w-name">${esc(w.name)}</div><div class="w-type">${w.type} · Awal: ${fmt(w.initial_balance)}</div></div>
+      <div style="text-align:right">
+        <div class="w-amount">${maskAmt(w.balance)}</div>
+        <div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end">
+          <button class="del-btn" onclick="deleteWallet('${w.id}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── RENDER JOURNAL ───────────────────────────────────────────────────────────
+function renderJournal() {
+  // Wishlist
+  const wl = document.getElementById('wishlist-list');
+  if (!S.wishlist.length) { wl.innerHTML = '<div class="empty"><i class="ti ti-clock"></i>Belum ada item wishlist</div>'; }
+  else wl.innerHTML = S.wishlist.map((w, i) => `<div class="wish-row">
+    <div class="wish-info">
+      <div class="wish-name">${esc(w.name)}</div>
+      <div class="wish-price">${fmt(w.price)} · ${fmtDate(w.created)}</div>
+    </div>
+    <span class="badge ${w.status}">${w.status==='waiting'?'Menunggu':w.status==='cancelled'?'Dibatalkan':'Dibeli'}</span>
+    ${w.status === 'waiting' ? `
+      <div style="display:flex;gap:4px;margin-left:8px">
+        <button class="btn-sm" onclick="updateWish('${w.id}','purchased')" style="font-size:11px;padding:6px 10px">Beli</button>
+        <button class="btn-sm danger" onclick="updateWish('${w.id}','cancelled')" style="font-size:11px;padding:6px 10px">Batal</button>
+      </div>` : `<button class="del-btn" onclick="deleteWish('${w.id}')"><i class="ti ti-trash"></i></button>`}
+  </div>`).join('');
+
+  const saved = S.wishlist.filter(w => w.status === 'cancelled').reduce((s, w) => s + w.price, 0);
+  document.getElementById('saved-amt').textContent = maskAmt(saved);
+
+  // Journal (transactions with reason or emotion)
+  const jl = document.getElementById('journal-tx-list');
+  const journaled = [...S.transactions].filter(t => t.reason || t.emotion).reverse().slice(0, 30);
+  if (!journaled.length) { jl.innerHTML = '<div class="empty">Transaksi dengan alasan atau emosi akan muncul di sini</div>'; }
+  else jl.innerHTML = journaled.map(t => `<div style="padding:12px 16px;border-bottom:0.5px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
+      ${t.reason ? `<span style="background:var(--purple-light);color:var(--purple-dark);padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600">${t.reason}</span>` : ''}
+      ${t.emotion_emoji ? `<span style="font-size:16px">${t.emotion_emoji}</span>` : ''}
+      ${t.regret_answer ? `<span style="background:${t.regret_answer==='yes'?'var(--green-light)':t.regret_answer==='no'?'var(--red-light)':'var(--amber-light)'};color:${t.regret_answer==='yes'?'var(--green-dark)':t.regret_answer==='no'?'var(--red-dark)':'var(--amber-dark)'};padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600">${t.regret_answer==='yes'?'Tepat ✓':t.regret_answer==='no'?'Disesali ✗':'Netral'}</span>` : ''}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:14px;font-weight:600">${esc(t.category)}</span>
+      <span style="font-weight:700;color:${t.type==='expense'?'var(--red)':'var(--green)'}">${t.type==='expense'?'−':'+'}${fmt(t.amount)}</span>
+    </div>
+    <div style="font-size:12px;color:var(--text2);margin-top:2px">${esc(t.wallet)} · ${fmtDate(t.date)}${t.note?` · ${esc(t.note)}`:''}</div>
+  </div>`).join('');
+
+  // Regret
+  const rl = document.getElementById('regret-list');
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
+  const needReview = S.transactions.filter(t => t.type === 'expense' && t.date >= thirtyDaysAgo && !t.regret_answer);
+  if (!needReview.length) { rl.innerHTML = '<div class="empty">Tidak ada transaksi yang perlu direview</div>'; }
+  else rl.innerHTML = needReview.slice(0, 10).map(t => `<div class="regret-row">
+    <div class="rg-header">
+      <div>
+        <div style="font-weight:600;font-size:14px">${esc(t.category)} · ${fmt(t.amount)}</div>
+        <div style="font-size:12px;color:var(--text2)">${fmtDate(t.date)} · ${esc(t.wallet)}</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Apakah keputusan ini masih tepat?</div>
+    <div class="rg-btns">
+      <button class="rg-btn yes" onclick="answerRegret('${t.id}','yes')">✓ Tepat</button>
+      <button class="rg-btn no" onclick="answerRegret('${t.id}','no')">✗ Disesali</button>
+      <button class="rg-btn neutral" onclick="answerRegret('${t.id}','neutral')">— Netral</button>
+    </div>
+  </div>`).join('');
+}
+
+// ─── RENDER INSIGHT ───────────────────────────────────────────────────────────
+function renderInsight() {
+  const score = calcScore();
+  document.getElementById('ins-score').textContent = score;
+  const { label } = scoreLabel(score);
+  document.getElementById('ins-score-badge').textContent = label;
+  document.getElementById('ins-saverate').textContent = savingRate() + '%';
+
+  const expenses = S.transactions.filter(t => t.type === 'expense');
+  const impulse = expenses.filter(t => t.reason === 'Impulse' || t.reason === 'FOMO');
+  const impPct = pct(impulse.length, expenses.length || 1);
+  document.getElementById('ins-impulse').textContent = impPct + '%';
+
+  // Personality
+  const { type, desc } = getPersonality();
+  document.getElementById('personality-wrap').innerHTML = `<div class="personality-card">
+    <div class="per-type">${type}</div>
+    <div class="per-desc">${desc}</div>
+  </div>`;
+
+  // Sherlock
+  const insights = generateInsights(10);
+  document.getElementById('ins-sherlock').innerHTML = insights.length
+    ? insights.map(i => `<div class="insight-row"><span class="ins-emoji">${i.emoji}</span><div class="ins-text">${i.text}</div></div>`).join('')
+    : '<div class="empty">Tambah lebih banyak transaksi untuk insight otomatis</div>';
+
+  // Emotion analysis
+  const byEmotion = {};
+  expenses.forEach(t => { if (t.emotion) byEmotion[t.emotion] = (byEmotion[t.emotion] || 0) + t.amount; });
+  const emojiMap = { Happy:'😀',Neutral:'😐',Anxious:'😟',Stress:'😩',Angry:'😤',Sad:'😔',Motivated:'🔥' };
+  document.getElementById('ins-emotion').innerHTML = Object.entries(byEmotion).length
+    ? Object.entries(byEmotion).sort((a,b)=>b[1]-a[1]).map(([e,v]) =>
+        `<div class="insight-row"><span class="ins-emoji">${emojiMap[e]||'😐'}</span><div class="ins-text"><strong>${e}</strong><br>${fmt(v)} · ${pct(v, totalExpense()||1)}% dari total pengeluaran</div></div>`
+      ).join('')
+    : '<div class="empty">Data emosi akan muncul setelah kamu tag emosi di transaksi</div>';
+
+  // Reason analysis
+  const byReason = {};
+  expenses.forEach(t => { if (t.reason) byReason[t.reason] = (byReason[t.reason] || 0) + t.amount; });
+  document.getElementById('ins-reason').innerHTML = Object.entries(byReason).length
+    ? Object.entries(byReason).sort((a,b)=>b[1]-a[1]).map(([r,v]) =>
+        `<div class="insight-row"><span class="ins-emoji">${r==='Impulse'||r==='FOMO'?'⚡':'💡'}</span><div class="ins-text"><strong>${r}</strong><br>${fmt(v)} · ${pct(v, totalExpense()||1)}% dari total pengeluaran</div></div>`
+      ).join('')
+    : '<div class="empty">Data alasan akan muncul setelah kamu pilih alasan di transaksi</div>';
+
+  // Wealth Story
+  document.getElementById('wealth-story').innerHTML = `<div class="story-card"><p>${buildStory()}</p></div>`;
+
+  // Level
+  const lv = getLevel();
+  document.getElementById('ins-level').innerHTML = `<div class="level-card">
+    <span class="level-emoji">${lv.emoji}</span>
+    <div><div class="level-name">Level ${lv.num} — ${lv.name}</div><div class="level-sub">${S.transactions.length} transaksi tercatat · ${lv.next ? (lv.next - S.transactions.length) + ' transaksi lagi ke Level ' + (lv.num+1) : 'Level Tertinggi!'}</div></div>
+  </div>`;
+
+  // Achievements
+  document.getElementById('ins-achievements').innerHTML = getAchievements()
+    .map(a => `<div class="ach-row">
+      <div class="ach-icon ${a.done?'done':''}">${a.done?'✅':'⭕'}</div>
+      <div class="ach-info"><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div>
+      ${a.done ? '<span style="font-size:12px;font-weight:700;color:var(--green)">Selesai</span>' : ''}
+    </div>`).join('');
+}
+
+// ─── RENDER PROFILE ───────────────────────────────────────────────────────────
+function renderProfile() {
+  const n = S.user.name || '—';
+  document.getElementById('prof-name').textContent = n;
+  document.getElementById('prof-avatar').textContent = (n[0] || '?').toUpperCase();
+  document.getElementById('prof-income').textContent = fmt(S.user.monthly_income || 0);
+  document.getElementById('prof-saverate').textContent = savingRate() + '%';
+  document.getElementById('prof-tx-count').textContent = S.transactions.length;
+
+  // Recurring
+  const rl = document.getElementById('recurring-list');
+  if (!S.recurring.length) { rl.innerHTML = '<div class="empty" style="padding:20px">Belum ada recurring income</div>'; }
+  else rl.innerHTML = S.recurring.map((r, i) => `<div class="rec-row">
+    <div class="w-icon" style="background:var(--green-light);color:var(--green)"><i class="ti ti-repeat"></i></div>
+    <div class="rec-info">
+      <div class="rec-name">${esc(r.name)}</div>
+      <div class="rec-sub">${fmt(r.amount)} · Tgl ${r.day} tiap bulan · ${esc(r.wallet_name)}</div>
+    </div>
+    <button class="del-btn" onclick="deleteRecurring('${r.id}')"><i class="ti ti-trash"></i></button>
+  </div>`).join('');
+
+  // Goals
+  const gl = document.getElementById('prof-goals');
+  if (!S.goals.length) { gl.innerHTML = '<div class="empty" style="padding:20px">Belum ada goal finansial</div>'; }
+  else gl.innerHTML = S.goals.map((g, i) => {
+    const p = pct(g.progress, g.target);
+    return `<div class="goal-row" style="cursor:default">
+      <div class="goal-top">
+        <span class="goal-name">${esc(g.name)}</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="goal-pct">${p}%</span>
+          <button class="btn-sm" onclick="openGoalProgress('${g.id}')" style="font-size:12px;padding:6px 12px">+ Update</button>
+          <button class="del-btn" onclick="deleteGoal('${g.id}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+      <div class="bar-bg"><div class="bar-fill ${g.progress>=g.target?'complete':''}" style="width:${Math.min(p,100)}%"></div></div>
+      <div class="goal-footer"><span>${maskAmt(g.progress)}</span><span>Target: ${maskAmt(g.target)}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ─── SCORE & ANALYTICS ───────────────────────────────────────────────────────
+function calcScore() {
+  if (!S.transactions.length) return 50;
+  const expenses = S.transactions.filter(t => t.type === 'expense');
+  const impulse = expenses.filter(t => t.reason === 'Impulse' || t.reason === 'FOMO');
+  const impulseRatio = expenses.length ? impulse.length / expenses.length : 0;
+  const sr = Math.max(0, savingRate()) / 100;
+  const goalP = S.goals.length ? S.goals.reduce((s, g) => s + pct(g.progress, g.target || 1), 0) / S.goals.length / 100 : 0.5;
+  const cons = Math.min(1, S.transactions.length / 30);
+  const regrets = S.transactions.filter(t => t.regret_answer === 'no').length;
+  const regretRatio = expenses.length ? regrets / expenses.length : 0;
+  return Math.min(100, Math.max(0, Math.round(sr * 30 + (1 - impulseRatio) * 25 + goalP * 20 + cons * 15 + (1 - regretRatio) * 10)));
+}
+function scoreLabel(s) {
+  if (s >= 90) return { label: '🏆 Strategic Investor' };
+  if (s >= 75) return { label: '🎯 Conscious Planner' };
+  if (s >= 60) return { label: '⚖️ Balanced Spender' };
+  if (s >= 40) return { label: '⚡ Reactive Spender' };
+  return { label: '🔥 Impulsive Spender' };
+}
+function getPersonality() {
+  const expenses = S.transactions.filter(t => t.type === 'expense');
+  const reasons = expenses.map(t => t.reason).filter(Boolean);
+  if (!reasons.length) return { type: 'Strategic Planner', desc: 'Mulai catat alasan di balik transaksimu untuk analisis kepribadian finansial yang lebih akurat.' };
+  const counts = {};
+  reasons.forEach(r => counts[r] = (counts[r] || 0) + 1);
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+  const map = {
+    Impulse: { type: 'Emotional Buyer 💸', desc: 'Kamu cenderung membeli berdasarkan perasaan sesaat. Coba tunda keputusan pembelian 24-48 jam sebelum memutuskan.' },
+    FOMO: { type: 'FOMO Buyer 🌊', desc: 'Kamu sering terpengaruh tren dan lingkungan sekitar. Tanya pada diri sendiri: apakah ini benar-benar dibutuhkan?' },
+    Discount: { type: 'Discount Hunter 🎯', desc: 'Kamu sering membeli karena promo atau diskon. Pastikan pembelian memang sudah direncanakan sebelumnya.' },
+    'Self Reward': { type: 'Reward Seeker 🎁', desc: 'Kamu sering membeli sebagai hadiah untuk diri sendiri. Tetapkan budget self-reward yang jelas setiap bulan.' },
+    Need: { type: 'Strategic Planner 🧠', desc: 'Sebagian besar pengeluaranmu berbasis kebutuhan nyata. Kamu adalah pengambil keputusan finansial yang baik.' },
+    Investment: { type: 'Future Thinker 📈', desc: 'Kamu fokus pada pertumbuhan jangka panjang. Pastikan likuiditas harian tetap terjaga.' },
+    Emergency: { type: 'Crisis Manager 🚨', desc: 'Banyak pengeluaran tidak terduga. Pertimbangkan membangun dana darurat yang lebih kuat.' },
+  };
+  return map[top] || { type: 'Strategic Planner 🧠', desc: 'Kamu adalah pengambil keputusan finansial yang terstruktur.' };
+}
+function generateInsights(max) {
+  const insights = [];
+  const expenses = S.transactions.filter(t => t.type === 'expense');
+  const te = totalExpense();
+  if (!te && !S.transactions.length) return insights;
+
+  const foodExp = expenses.filter(t => t.category === 'Food').reduce((s, t) => s + t.amount, 0);
+  if (foodExp && te) insights.push({ emoji: '🍜', text: `${pct(foodExp, te)}% pengeluaranmu adalah untuk makanan (${fmt(foodExp)})` });
+
+  const impulse = expenses.filter(t => t.reason === 'Impulse' || t.reason === 'FOMO');
+  const impAmt = impulse.reduce((s, t) => s + t.amount, 0);
+  if (impulse.length) insights.push({ emoji: '⚡', text: `${impulse.length} transaksi impulsif terdeteksi senilai ${fmt(impAmt)}` });
+
+  const saved = S.wishlist.filter(w => w.status === 'cancelled').reduce((s, w) => s + w.price, 0);
+  if (saved) insights.push({ emoji: '💰', text: `${fmt(saved)} berhasil dihemat dari pembelian yang dibatalkan` });
+
+  const sr = savingRate();
+  if (S.user.monthly_income) insights.push({ emoji: sr >= 20 ? '📈' : '📉', text: `Saving rate bulan ini: ${sr}%. ${sr >= 20 ? 'Sangat baik!' : sr >= 10 ? 'Cukup baik, bisa ditingkatkan.' : 'Perlu perhatian lebih.'}` });
+
+  const shopExp = expenses.filter(t => t.category === 'Shopping').reduce((s, t) => s + t.amount, 0);
+  if (shopExp && te) insights.push({ emoji: '🛍️', text: `${fmt(shopExp)} (${pct(shopExp, te)}%) digunakan untuk belanja` });
+
+  const regretted = S.transactions.filter(t => t.regret_answer === 'no').length;
+  if (regretted) insights.push({ emoji: '🤔', text: `${regretted} transaksi yang kamu sesali. Pelajari polanya untuk keputusan lebih baik.` });
+
+  const nc = netCashFlow();
+  if (S.transactions.length) insights.push({ emoji: nc >= 0 ? '✅' : '⚠️', text: `Net cash flow: ${nc >= 0 ? '+' : ''}${fmt(nc)} bulan ini` });
+
+  return insights.slice(0, max);
+}
+function buildStory() {
+  if (!S.transactions.length) return 'Mulai catat transaksimu dan kami akan merangkum perjalanan finansialmu setiap bulan.';
+  const sr = savingRate();
+  const te = totalExpense();
+  const saved = S.wishlist.filter(w => w.status === 'cancelled').reduce((s, w) => s + w.price, 0);
+  const impulse = S.transactions.filter(t => t.reason === 'Impulse' || t.reason === 'FOMO').length;
+  const parts = [];
+  if (sr > 0) parts.push(`Kamu berhasil menabung ${sr}% dari penghasilanmu`);
+  if (saved) parts.push(`menghemat ${fmt(saved)} dari pembelian yang ditunda`);
+  if (impulse === 0 && S.transactions.length >= 5) parts.push(`dan menjaga nol transaksi impulsif`);
+  if (S.goals.some(g => g.progress >= g.target)) parts.push(`serta mencapai satu goal finansial`);
+  return parts.length
+    ? 'Bulan ini ' + parts.join(', ') + '. Terus pertahankan momentum ini! 🚀'
+    : `Kamu telah mencatat ${S.transactions.length} transaksi senilai ${fmt(te)}. Tambahkan alasan dan emosi di setiap transaksi untuk insight yang lebih dalam.`;
+}
+function getLevel() {
+  const n = S.transactions.length;
+  if (n >= 200) return { num: 5, name: 'Wealth Master', emoji: '👑', next: null };
+  if (n >= 100) return { num: 4, name: 'Wealth Architect', emoji: '🏛️', next: 200 };
+  if (n >= 50) return { num: 3, name: 'Financial Strategist', emoji: '🎯', next: 100 };
+  if (n >= 20) return { num: 2, name: 'Decision Thinker', emoji: '🧠', next: 50 };
+  return { num: 1, name: 'Money Explorer', emoji: '🔍', next: 20 };
+}
+function getAchievements() {
+  const txLen = S.transactions.length;
+  const expenses = S.transactions.filter(t => t.type === 'expense');
+  const saved = S.wishlist.filter(w => w.status === 'cancelled').reduce((s, w) => s + w.price, 0);
+  const noImpulse10 = expenses.length >= 10 && expenses.slice(-10).every(t => t.reason !== 'Impulse' && t.reason !== 'FOMO');
+  return [
+    { name: '🚀 First Transaction', desc: 'Catat transaksi pertamamu', done: txLen >= 1 },
+    { name: '💰 First Million Saved', desc: 'Hemat Rp 1.000.000 dari wishlist', done: saved >= 1000000 },
+    { name: '🎯 Goal 25%', desc: 'Capai 25% progress salah satu goal', done: S.goals.some(g => pct(g.progress, g.target) >= 25) },
+    { name: '🏆 Goal 50%', desc: 'Capai 50% progress salah satu goal', done: S.goals.some(g => pct(g.progress, g.target) >= 50) },
+    { name: '✅ Goal Achieved', desc: 'Selesaikan satu goal!', done: S.goals.some(g => g.progress >= g.target) },
+    { name: '🧘 No Impulse Streak', desc: '10 transaksi berturut tanpa Impulse/FOMO', done: noImpulse10 },
+    { name: '📝 Journaler', desc: 'Catat alasan di 10 transaksi', done: expenses.filter(t => t.reason).length >= 10 },
+    { name: '💎 Consistent Saver', desc: 'Saving rate di atas 20%', done: savingRate() >= 20 },
+  ];
+}
+
+// ─── TRANSACTION FORM ─────────────────────────────────────────────────────────
+let txType = 'expense';
+let selReasonVal = null, selEmotionVal = null, selEmotionEmoji = null;
+let selWalletId = null, selDestWalletId = null;
+let selCat = null;
+
+const EXPENSE_CATS = ['Food','Transport','Bills','Shopping','Entertainment','Health','Education','Investment','Others'];
+const INCOME_CATS = ['Salary','Freelance','Bonus','Business','Investment Return','Others'];
+
+function openTxSheet() {
+  txType = 'expense'; selReasonVal = null; selEmotionVal = null; selEmotionEmoji = null;
+  selWalletId = null; selDestWalletId = null; selCat = null;
+  document.getElementById('tx-amount').value = '';
+  document.getElementById('tx-note').value = '';
+  document.querySelectorAll('#tx-reason-chips .chip').forEach(c => c.classList.remove('sel'));
+  document.querySelectorAll('#tx-emotion-chips .chip').forEach(c => c.classList.remove('sel'));
+  setTxTab('expense');
+  openSheet('tx-sheet');
+}
+function closeTxSheet() { closeSheet('tx-sheet'); }
+
+function setTxTab(type) {
+  txType = type;
+  ['expense','income','transfer'].forEach(t => {
+    const el = document.getElementById('ttab-' + t);
+    el.className = 'type-tab ' + (t === type ? 'active ' + t : t);
+  });
+  // Categories
+  const cats = type === 'income' ? INCOME_CATS : (type === 'transfer' ? [] : EXPENSE_CATS);
+  const cg = document.getElementById('tx-cat-group');
+  cg.style.display = type === 'transfer' ? 'none' : '';
+  document.getElementById('tx-cat-chips').innerHTML = cats.map(c =>
+    `<div class="chip" onclick="selCatFn(this,'${c}')">${c}</div>`
+  ).join('');
+  selCat = cats[0] || null;
+
+  // Wallet label
+  document.getElementById('tx-wallet-label').textContent = type === 'income' ? 'Masuk ke Wallet' : type === 'transfer' ? 'Dari Wallet' : 'Wallet';
+  document.getElementById('tx-dest-group').style.display = type === 'transfer' ? '' : 'none';
+
+  // Reason/emotion only for expense
+  document.getElementById('tx-reason-group').style.display = (type === 'expense') ? '' : 'none';
+  document.getElementById('tx-emotion-group').style.display = (type === 'expense') ? '' : 'none';
+
+  renderWalletSelector('tx-wallet-list', selWalletId, id => { selWalletId = id; });
+  if (type === 'transfer') renderWalletSelector('tx-dest-list', selDestWalletId, id => { selDestWalletId = id; });
+}
+
+function selCatFn(el, cat) {
+  document.querySelectorAll('#tx-cat-chips .chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel'); selCat = cat;
+}
+function selReason(el, val) {
+  document.querySelectorAll('#tx-reason-chips .chip').forEach(c => c.classList.remove('sel'));
+  if (selReasonVal === val) { selReasonVal = null; return; }
+  el.classList.add('sel'); selReasonVal = val;
+}
+function selEmotion(el, val, emoji) {
+  document.querySelectorAll('#tx-emotion-chips .chip').forEach(c => c.classList.remove('sel'));
+  if (selEmotionVal === val) { selEmotionVal = null; selEmotionEmoji = null; return; }
+  el.classList.add('sel'); selEmotionVal = val; selEmotionEmoji = emoji;
+}
+
+function renderWalletSelector(elId, selectedId, onSel) {
+  const el = document.getElementById(elId);
+  if (!S.wallets.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text2);padding:8px">Belum ada wallet. Tambah wallet terlebih dahulu.</div>'; return; }
+  const firstId = selectedId || S.wallets[0].id;
+  if (!selectedId) onSel(firstId);
+  el.innerHTML = S.wallets.map(w => {
+    const sel = (selectedId || firstId) === w.id;
+    return `<div class="wallet-select-item ${sel?'sel':''}" onclick="selectWalletItem('${elId}',this,'${w.id}')">
+      <div class="w-icon ${walletTypeClass(w.type)}" style="width:32px;height:32px;font-size:16px;border-radius:8px"><i class="ti ${walletTypeIcon(w.type)}"></i></div>
+      <div class="flex-1"><div class="wsi-name">${esc(w.name)}</div><div class="wsi-bal">${fmt(w.balance)}</div></div>
+    </div>`;
+  }).join('');
+  el._onSel = onSel;
+}
+
+function selectWalletItem(elId, el, id) {
+  const container = document.getElementById(elId);
+  container.querySelectorAll('.wallet-select-item').forEach(i => i.classList.remove('sel'));
+  el.classList.add('sel');
+  if (container._onSel) container._onSel(id);
+  if (elId === 'tx-wallet-list') selWalletId = id;
+  if (elId === 'tx-dest-list') selDestWalletId = id;
+  if (elId === 'gp-wallet-list') gpWalletId = id;
+  if (elId === 'rec-wallet-list') recWalletId = id;
+}
+
+function saveTx() {
+  const amount = parseFloat(document.getElementById('tx-amount').value);
+  if (!amount || amount <= 0) { toast('Masukkan nominal yang valid'); return; }
+  if (!S.wallets.length) { toast('Tambah wallet terlebih dahulu'); return; }
+
+  const walletId = selWalletId || S.wallets[0].id;
+  const wallet = walletById(walletId);
+  if (!wallet) { toast('Pilih wallet'); return; }
+
+  if (txType === 'transfer') {
+    const destId = selDestWalletId || S.wallets[0].id;
+    if (destId === walletId) { toast('Wallet asal dan tujuan tidak boleh sama'); return; }
+    const dest = walletById(destId);
+    if (!dest) { toast('Pilih wallet tujuan'); return; }
+    wallet.balance -= amount;
+    dest.balance += amount;
+    S.transactions.push({ id: uid(), type: 'transfer', amount, category: 'Transfer', wallet: wallet.name, dest_wallet: dest.name, reason: null, emotion: null, emotion_emoji: null, note: document.getElementById('tx-note').value.trim(), date: today() });
+    toast('Transfer berhasil dicatat ✓');
+  } else {
+    if (txType === 'expense') wallet.balance -= amount;
+    else wallet.balance += amount;
+    S.transactions.push({
+      id: uid(), type: txType, amount,
+      category: selCat || (txType === 'income' ? 'Others' : 'Others'),
+      wallet: wallet.name, wallet_id: walletId,
+      reason: selReasonVal, emotion: selEmotionVal, emotion_emoji: selEmotionEmoji,
+      note: document.getElementById('tx-note').value.trim(),
+      date: today()
+    });
+    toast(txType === 'expense' ? 'Pengeluaran dicatat ✓' : 'Pemasukan dicatat ✓');
+  }
+
+  saveState();
+  closeTxSheet();
+  renderScreen(S.current_screen);
+}
+
+// ─── WALLET ───────────────────────────────────────────────────────────────────
+let selectedWType = 'Bank';
+function openAddWallet() { document.getElementById('w-name').value = ''; document.getElementById('w-balance').value = ''; selWType(document.getElementById('wtype-Bank'), 'Bank'); openSheet('wallet-sheet'); }
+function selWType(el, t) {
+  document.querySelectorAll('[id^="wtype-"]').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel'); selectedWType = t;
+}
+function saveWallet() {
+  const name = document.getElementById('w-name').value.trim();
+  if (!name) { toast('Masukkan nama wallet'); return; }
+  const bal = parseFloat(document.getElementById('w-balance').value) || 0;
+  S.wallets.push({ id: uid(), name, type: selectedWType, balance: bal, initial_balance: bal, created: today() });
+  saveState(); closeSheet('wallet-sheet'); renderScreen(S.current_screen); toast('Wallet berhasil ditambahkan ✓');
+}
+function deleteWallet(id) {
+  if (!confirm('Hapus wallet ini? Transaksi yang sudah ada tidak akan terhapus.')) return;
+  S.wallets = S.wallets.filter(w => w.id !== id);
+  saveState(); renderScreen(S.current_screen); toast('Wallet dihapus');
+}
+
+// ─── GOALS ────────────────────────────────────────────────────────────────────
+function openAddGoal() { document.getElementById('g-name').value = ''; document.getElementById('g-target').value = ''; document.getElementById('g-progress').value = '0'; openSheet('goal-sheet'); }
+function saveGoal() {
+  const name = document.getElementById('g-name').value.trim();
+  const target = parseFloat(document.getElementById('g-target').value) || 0;
+  if (!name) { toast('Masukkan nama goal'); return; }
+  if (!target) { toast('Masukkan target nominal'); return; }
+  const progress = parseFloat(document.getElementById('g-progress').value) || 0;
+  S.goals.push({ id: uid(), name, target, progress, created: today() });
+  saveState(); closeSheet('goal-sheet'); renderScreen(S.current_screen); toast('Goal ditambahkan ✓');
+}
+function deleteGoal(id) {
+  if (!confirm('Hapus goal ini?')) return;
+  S.goals = S.goals.filter(g => g.id !== id);
+  saveState(); renderScreen(S.current_screen); toast('Goal dihapus');
+}
+
+// Goal Progress with wallet selection
+let gpGoalId = null, gpWalletId = null;
+function openGoalProgress(id) {
+  gpGoalId = id; gpWalletId = null;
+  const g = S.goals.find(g => g.id === id);
+  if (!g) return;
+  document.getElementById('gp-title').textContent = g.name;
+  document.getElementById('gp-current').textContent = fmt(g.progress);
+  document.getElementById('gp-remaining').textContent = fmt(g.target - g.progress) + ' lagi menuju target';
+  document.getElementById('gp-bar').style.width = Math.min(pct(g.progress, g.target), 100) + '%';
+  document.getElementById('gp-amount').value = '';
+  renderWalletSelector('gp-wallet-list', null, id => { gpWalletId = id; });
+  openSheet('goal-progress-sheet');
+}
+function saveGoalProgress() {
+  const g = S.goals.find(g => g.id === gpGoalId);
+  if (!g) return;
+  const add = parseFloat(document.getElementById('gp-amount').value) || 0;
+  if (!add || add <= 0) { toast('Masukkan nominal yang valid'); return; }
+  const wallet = gpWalletId ? walletById(gpWalletId) : null;
+  if (wallet) {
+    if (wallet.balance < add) { toast('Saldo wallet tidak cukup'); return; }
+    wallet.balance -= add;
+  }
+  g.progress = Math.min(g.target, g.progress + add);
+  if (wallet) {
+    S.transactions.push({ id: uid(), type: 'expense', amount: add, category: 'Investment', wallet: wallet.name, wallet_id: wallet.id, reason: 'Investment', emotion: null, emotion_emoji: null, note: 'Goal: ' + g.name, date: today() });
+  }
+  saveState(); closeSheet('goal-progress-sheet'); renderScreen(S.current_screen);
+  if (g.progress >= g.target) toast('🎉 Goal tercapai! Selamat!');
+  else toast('Progress goal diperbarui ✓');
+}
+
+// ─── WISHLIST ─────────────────────────────────────────────────────────────────
+function openAddWishlist() { document.getElementById('ws-name').value = ''; document.getElementById('ws-price').value = ''; openSheet('wish-sheet'); }
+function saveWish() {
+  const name = document.getElementById('ws-name').value.trim();
+  const price = parseFloat(document.getElementById('ws-price').value) || 0;
+  if (!name) { toast('Masukkan nama item'); return; }
+  S.wishlist.push({ id: uid(), name, price, status: 'waiting', created: today() });
+  saveState(); closeSheet('wish-sheet'); renderScreen(S.current_screen); toast('Ditambahkan ke wishlist ✓');
+}
+function updateWish(id, status) {
+  const w = S.wishlist.find(w => w.id === id);
+  if (w) { w.status = status; w.decision_date = today(); }
+  saveState(); renderScreen(S.current_screen);
+  if (status === 'cancelled') toast('💰 Uang berhasil dihemat!');
+  else toast('Item ditandai sebagai dibeli ✓');
+}
+function deleteWish(id) { S.wishlist = S.wishlist.filter(w => w.id !== id); saveState(); renderScreen(S.current_screen); }
+
+// ─── RECURRING ────────────────────────────────────────────────────────────────
+let recWalletId = null;
+function openRecurring() {
+  document.getElementById('rec-name').value = ''; document.getElementById('rec-amount').value = '';
+  document.getElementById('rec-date').value = ''; recWalletId = null;
+  renderWalletSelector('rec-wallet-list', null, id => { recWalletId = id; });
+  openSheet('recurring-sheet');
+}
+function saveRecurring() {
+  const name = document.getElementById('rec-name').value.trim();
+  const amount = parseFloat(document.getElementById('rec-amount').value) || 0;
+  const day = parseInt(document.getElementById('rec-date').value) || 1;
+  if (!name || !amount) { toast('Lengkapi semua field'); return; }
+  const wallet = recWalletId ? walletById(recWalletId) : null;
+  S.recurring.push({ id: uid(), name, amount, day, wallet_id: recWalletId, wallet_name: wallet ? wallet.name : '—', created: today() });
+  saveState(); closeSheet('recurring-sheet'); renderScreen(S.current_screen); toast('Recurring income disimpan ✓');
+}
+function deleteRecurring(id) { S.recurring = S.recurring.filter(r => r.id !== id); saveState(); renderScreen(S.current_screen); }
+
+// ─── REGRET ───────────────────────────────────────────────────────────────────
+function answerRegret(txId, answer) {
+  const tx = S.transactions.find(t => t.id === txId);
+  if (tx) tx.regret_answer = answer;
+  saveState(); renderJournal();
+  toast(answer === 'yes' ? '✓ Keputusan tepat' : answer === 'no' ? 'Tercatat sebagai pelajaran' : 'Dicatat sebagai netral');
+}
+
+// ─── EDIT FIELDS ──────────────────────────────────────────────────────────────
+function editMonthlyIncome() {
+  document.getElementById('edit-title').textContent = 'Edit Penghasilan Bulanan';
+  document.getElementById('edit-label').textContent = 'Penghasilan Bulanan (Rp)';
+  const inp = document.getElementById('edit-input');
+  inp.type = 'number'; inp.inputMode = 'numeric';
+  inp.value = S.user.monthly_income || '';
+  document.getElementById('edit-save-btn').onclick = () => {
+    S.user.monthly_income = parseFloat(inp.value) || 0;
+    saveState(); closeSheet('edit-sheet'); renderProfile(); toast('Penghasilan diperbarui ✓');
+  };
+  openSheet('edit-sheet');
+}
+function editName() {
+  document.getElementById('edit-title').textContent = 'Ubah Nama';
+  document.getElementById('edit-label').textContent = 'Nama';
+  const inp = document.getElementById('edit-input');
+  inp.type = 'text'; inp.inputMode = 'text';
+  inp.value = S.user.name || '';
+  document.getElementById('edit-save-btn').onclick = () => {
+    S.user.name = inp.value.trim() || S.user.name;
+    saveState(); closeSheet('edit-sheet'); renderProfile(); toast('Nama diperbarui ✓');
+  };
+  openSheet('edit-sheet');
+}
+
+// ─── ALL TX ───────────────────────────────────────────────────────────────────
+let txFilter = 'all';
+function showAllTx() { txFilter = 'all'; renderAllTx(); openSheet('all-tx-sheet'); }
+function filterTx(el, f) {
+  txFilter = f;
+  document.querySelectorAll('#tx-filter-row .chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  renderAllTx();
+}
+function renderAllTx() {
+  const list = [...S.transactions].reverse();
+  const filtered = txFilter === 'all' ? list : list.filter(t => t.type === txFilter);
+  document.getElementById('all-tx-list').innerHTML = filtered.length
+    ? filtered.map(t => txRowHTML(t)).join('')
+    : '<div class="empty">Tidak ada transaksi</div>';
+}
+
+// ─── SHEET HELPERS ────────────────────────────────────────────────────────────
+function openSheet(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeSheet(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+
+// Close sheet on overlay click
+document.querySelectorAll('.overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+  });
+});
+
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function exportData() {
+  const data = JSON.stringify(S, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'decision-wealth-export.json';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  toast('Data berhasil diekspor ✓');
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetApp() {
+  if (!confirm('Hapus semua data? Tindakan ini tidak dapat dibatalkan.')) return;
+  localStorage.removeItem(KEY);
+  location.reload();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+loadState();
+
+if (S.user.name) {
+  // Already onboarded
+  document.getElementById('ob-screen').classList.remove('active');
+  document.getElementById('main-nav').classList.add('visible');
+  document.getElementById('fab').classList.add('visible');
+  navigate(S.current_screen || 'home');
+} else {
+  document.getElementById('ob-screen').classList.add('active');
+}
+
+// PWA service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// Check recurring income
+function checkRecurring() {
+  const now = new Date();
+  const today_date = now.getDate();
+  S.recurring.forEach(r => {
+    if (r.day === today_date) {
+      const lastCheck = r.last_applied ? new Date(r.last_applied) : null;
+      const sameMonth = lastCheck && lastCheck.getMonth() === now.getMonth() && lastCheck.getFullYear() === now.getFullYear();
+      if (!sameMonth) {
+        const wallet = r.wallet_id ? walletById(r.wallet_id) : null;
+        if (wallet) {
+          wallet.balance += r.amount;
+          S.transactions.push({ id: uid(), type: 'income', amount: r.amount, category: 'Salary', wallet: wallet.name, wallet_id: wallet.id, reason: null, emotion: null, emotion_emoji: null, note: r.name + ' (recurring)', date: now.toISOString() });
+          r.last_applied = now.toISOString();
+          toast('💰 Recurring income "' + r.name + '" telah masuk!');
+        }
+      }
+    }
+  });
+  saveState();
+}
+checkRecurring();
+</script>
+</body>
+</html>
